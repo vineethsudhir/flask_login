@@ -1,49 +1,18 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, app, Flask, has_request_context
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 
 from app.auth.decorators import admin_required
 from flask_login import login_user, login_required, logout_user, current_user
+from sqlalchemy.orm import load_only
 from werkzeug.security import generate_password_hash
 from app.auth.forms import login_form, register_form, profile_form, security_form, user_edit_form
 from app.db import db
 from app.db.models import User
 
-import logging
-import os
-
 auth = Blueprint('auth', __name__, template_folder='templates')
 from flask import current_app
 
-app = Flask(__name__)
-
-def debuglog():
-    debug_file = os.path.abspath('app/logs/debug.log')
-    debug_handler = logging.FileHandler(debug_file)
-    # Create a log file formatter object to create the entry in the log
-    debug_formatter = DebugFormatter(
-        'Timestamp of Request: [%(asctime)s]\n' '%(url)s requested by %(remote_addr)s\n'
-        '%(levelname)s in %(module)s: %(message)s'
-    )
-    # set the formatter for the log entry
-    debug_handler.setFormatter(debug_formatter)
-    # Set the logging level of the file handler object so that it logs INFO and up
-    debug_handler.setLevel(logging.DEBUG)
-    # Add the handler for the log entry
-    app.logger.addHandler(debug_handler)
-
-class DebugFormatter(logging.Formatter):
-    def format(self, record):
-        if has_request_context():
-            record.url = request.url
-            record.remote_addr = request.remote_addr
-        else:
-            record.url = None
-            record.remote_addr = None
-
-        return super().format(record)
 
 
-app = Flask(__name__)
-debug_hand = debuglog()
 
 @auth.route('/login', methods=['POST', 'GET'])
 def login():
@@ -61,7 +30,6 @@ def login():
             db.session.commit()
             login_user(user)
             flash("Welcome", 'success')
-            app.logger.debug('login successful')
             return redirect(url_for('auth.dashboard'))
     return render_template('login.html', form=form)
 
@@ -111,15 +79,14 @@ def logout():
 @login_required
 @admin_required
 def browse_users():
+    current_app.logger.info('Info level log')
+    current_app.logger.warning('Warning level log')
     data = User.query.all()
     titles = [('email', 'Email'), ('registered_on', 'Registered On')]
     retrieve_url = ('auth.retrieve_user', [('user_id', ':id')])
     edit_url = ('auth.edit_user', [('user_id', ':id')])
     add_url = url_for('auth.add_user')
     delete_url = ('auth.delete_user', [('user_id', ':id')])
-
-    current_app.logger.info("Browse page loading")
-
     return render_template('browse.html', titles=titles, add_url=add_url, edit_url=edit_url, delete_url=delete_url,
                            retrieve_url=retrieve_url, data=data, User=User, record_type="Users")
 

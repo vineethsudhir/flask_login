@@ -4,6 +4,7 @@ INFO in __init__: this is the plain message
 INFO in __init__: this is the plain message
 [2022-04-19 18:35:40,085] 172.21.0.1 requested http://localhost/welcome
 INFO in __init__: this is the plain message
+<<<<<<< HEAD
 [2022-04-19 19:35:44,214] 172.21.0.1 requested http://localhost/welcome
 INFO in __init__: this is the plain message
 [2022-04-19 19:35:46,236] 172.21.0.1 requested http://localhost/
@@ -58,3 +59,5 @@ INFO in __init__: this is the plain message
 INFO in __init__: this is the plain message
 [2022-04-19 19:43:29,138] 172.21.0.1 requested http://localhost/dashboard
 INFO in __init__: this is the plain message
+=======
+>>>>>>> origin/logging
