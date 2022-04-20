@@ -63,6 +63,7 @@ def login():
             db.session.commit()
             login_user(user)
             flash("Welcome", 'success')
+            app.logger.debug('login successful')
             return redirect(url_for('auth.dashboard'))
     return render_template('login.html', form=form)
 
@@ -83,6 +84,7 @@ def register():
                 db.session.add(user)
                 db.session.commit()
             flash('Congratulations, you are now a registered user!', "success")
+            app.logger.debug('Registration successful')
             return redirect(url_for('auth.login'), 302)
         else:
             flash('Already Registered')
@@ -105,6 +107,7 @@ def logout():
     db.session.add(user)
     db.session.commit()
     logout_user()
+    app.logger.debug('logout successful')
     return redirect(url_for('auth.login'))
 
 
@@ -158,9 +161,11 @@ def add_user():
             db.session.add(user)
             db.session.commit()
             flash('Congratulations, you just created a user', 'success')
+            app.logger.debug('account creation successful')
             return redirect(url_for('auth.browse_users'))
         else:
             flash('Already Registered')
+            app.logger.debug('account already exists. operation failed')
             return redirect(url_for('auth.browse_users'))
     return render_template('user_new.html', form=form)
 
@@ -175,6 +180,7 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     flash('User Deleted', 'success')
+    app.logger.debug('user successfully deleted')
     return redirect(url_for('auth.browse_users'), 302)
 
 
@@ -187,6 +193,7 @@ def edit_profile():
         db.session.add(current_user)
         db.session.commit()
         flash('You Successfully Updated your Profile', 'success')
+        app.logger.debug('profile update successful')
         return redirect(url_for('auth.dashboard'))
     return render_template('profile_edit.html', form=form)
 
@@ -201,6 +208,7 @@ def edit_account():
         db.session.add(current_user)
         db.session.commit()
         flash('You Successfully Updated your Password or Email', 'success')
+        app.logger.debug('account update successful')
         return redirect(url_for('auth.dashboard'))
     return render_template('manage_account.html', form=form)
 
