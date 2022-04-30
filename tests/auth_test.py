@@ -15,3 +15,8 @@ def test_auth_pages(client):
     assert response.status_code == 200
     response = client.get("/login")
     assert response.status_code == 200
+
+def test_csv_upload(client):
+    """This tests csv upload without login"""
+    response = client.get("/songs/upload")
+    assert response.status_code == 302
